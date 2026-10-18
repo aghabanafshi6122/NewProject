@@ -55,7 +55,7 @@ def _load_or_create_secret() -> str:
         return secrets.token_urlsafe(32)
 
 CONFIG = {
-    "port": 8000,  # پورت داخلی که Nginx به آن پروکسی می‌کند
+    "port": int(os.environ.get("PORT", 8000)),
     "secret": _load_or_create_secret(),
     "host": os.environ.get("RAILWAY_PUBLIC_DOMAIN", "localhost"),
 }
@@ -401,7 +401,7 @@ async def subscription_single(uuid: str, request: Request):
     vless = vless_link_for_link(link, uuid, host)
     content = base64.b64encode(vless.encode()).decode()
     return Response(content=content, media_type="text/plain",
-                    headers={"profile-title": quote(link["label"]), "support-url": "https://t.me/aghabanafshi"})
+                    headers={"profile-title": quote(link["label"]), "support-url": "https://t.me/Purple-PanelHUB"})
 
 @app.get("/sub-all")
 async def subscription_all(request: Request, _=Depends(require_auth)):
