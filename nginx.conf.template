@@ -1,18 +1,23 @@
+upstream purple_backend {
+    server 127.0.0.1:8080 max_fails=1 fail_timeout=2s;
+    server 127.0.0.1:8081 backup;
+}
+
 server {
     listen $PORT;
     server_name _;
 
     client_max_body_size 100M;
 
-    # مسیر اصلی: صفحه خوش‌آمدگویی از فایل استاتیک
+    # صفحه اصلی: فایل استاتیک
     location = / {
         root /app/static;
         index index.html;
     }
 
-    # بقیه مسیرها: پروکسی به پنل پایتونی
+    # بقیه مسیرها: پروکسی به پنل (اول 8080، اگر جواب نداد 8081)
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://purple_backend;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -22,7 +27,7 @@ server {
     }
 
     location /ws/ {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://purple_backend;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -36,7 +41,7 @@ server {
     }
 
     location /xhttp-siz10/ {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://purple_backend;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
