@@ -1,4 +1,5 @@
-# start.py — main.py را دست نمی‌زند، فقط /open را اضافه و پورت را 2026 می‌کند
+# start.py — پنل را روی پورت داخلی 8080 اجرا می‌کند و /open را اضافه می‌کند
+# Nginx روی $PORT (تزریق‌شده توسط Railway) گوش می‌دهد و به 8080 پروکسی می‌کند.
 import os
 import json
 import uvicorn
@@ -56,5 +57,7 @@ code{{background:#1a0e30;padding:4px 10px;border-radius:6px;color:#C4B5FD;font-f
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 2026))
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    # پنل همیشه روی پورت داخلی 8080 اجرا می‌شود.
+    # Nginx روی $PORT (تزریق‌شده توسط Railway) گوش می‌دهد و به 8080 پروکسی می‌کند.
+    # host=127.0.0.1 یعنی پنل فقط از داخل کانتینر در دسترس است (نه از بیرون).
+    uvicorn.run(app, host="127.0.0.1", port=8080, log_level="info")
