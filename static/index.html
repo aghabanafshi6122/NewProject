@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purple-Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f081a;
+  --card:rgba(20,10,40,0.92);
+  --accent:#8B5CF6;
+  --accent2:#A78BFA;
+  --text:#F0E8FF;
+  --dim:#6D4A9E;
+  --mid:#9C8ABF;
+  --border:rgba(139,92,246,0.25);
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Vazirmatn',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  position:relative;
+}
+/* پس‌زمینه */
+.bg{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(139,92,246,0.15),transparent 70%),var(--bg);
+  z-index:0;
+}
+.grid{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(139,92,246,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(139,92,246,0.05) 1px,transparent 1px);
+  background-size:44px 44px;
+  z-index:0;
+}
+.orb{
+  position:fixed;border-radius:50%;filter:blur(90px);z-index:0;
+  animation:float 9s ease-in-out infinite;
+}
+.o1{width:380px;height:380px;background:rgba(139,92,246,0.08);top:-100px;right:-80px}
+.o2{width:280px;height:280px;background:rgba(139,92,246,0.04);bottom:-60px;left:-60px;animation-delay:4s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+
+/* کارت اصلی */
+.wrap{position:relative;z-index:10;width:100%;max-width:440px}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:44px 36px 38px;
+  backdrop-filter:blur(24px);
+  box-shadow:0 0 80px rgba(139,92,246,0.1),0 20px 60px rgba(0,0,0,0.5);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;top:-60px;left:-60px;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(139,92,246,0.15),transparent 70%);
+  pointer-events:none;
+}
+
+/* آیکون */
+.icon{
+  width:68px;height:68px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#8B5CF6,#6D28D9);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 22px;
+  font-size:32px;
+  box-shadow:0 8px 28px rgba(139,92,246,0.45);
+  position:relative;z-index:1;
+  animation:breathe 3s ease-in-out infinite;
+}
+@keyframes breathe{
+  0%,100%{transform:scale(1);box-shadow:0 8px 28px rgba(139,92,246,0.45)}
+  50%{transform:scale(1.04);box-shadow:0 12px 36px rgba(139,92,246,0.6)}
+}
+
+/* تیتر */
+h1{
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:-0.02em;
+  margin-bottom:12px;
+  position:relative;z-index:1;
+  background:linear-gradient(135deg,#F0E8FF,#A78BFA);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+p{
+  font-size:13.5px;
+  color:var(--mid);
+  line-height:1.9;
+  margin-bottom:30px;
+  position:relative;z-index:1;
+}
+
+/* دکمه */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  background:linear-gradient(135deg,#8B5CF6,#6D28D9);
+  color:#fff;
+  text-decoration:none;
+  padding:15px 34px;
+  border-radius:13px;
+  font-size:14.5px;
+  font-weight:700;
+  font-family:inherit;
+  box-shadow:0 6px 22px rgba(139,92,246,0.4);
+  transition:all 0.22s cubic-bezier(0.4,0,0.2,1);
+  position:relative;z-index:1;
+  overflow:hidden;
+  border:none;
+  cursor:pointer;
+}
+.btn::before{
+  content:'';
+  position:absolute;inset:0;
+  background:rgba(255,255,255,0.1);
+  opacity:0;
+  transition:0.22s;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(139,92,246,0.55);
+}
+.btn:hover::before{opacity:1}
+.btn:active{transform:translateY(0) scale(0.98)}
+
+/* فوتر */
+.footer{
+  margin-top:28px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  position:relative;z-index:1;
+}
+.footer-brand{
+  font-size:13px;
+  color:var(--text);
+  display:flex;align-items:center;gap:6px;
+  font-weight:600;
+}
+.footer-brand span{color:var(--accent2)}
+.footer-meta{
+  font-size:10px;
+  color:var(--dim);
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+@media(max-width:500px){
+  .card{padding:36px 26px 32px}
+  h1{font-size:20px}
+  p{font-size:12.5px}
+  .btn{padding:14px 28px;font-size:13.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="grid"></div>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="icon">👋</div>
+    <h1>سلام به پنل خوش آمدید!!!</h1>
+    <p>برای ورود به داشبورد مدیریت،<br>روی دکمه زیر کلیک کنید.</p>
+    <a class="btn" href="/login">
+      <span>🔐</span>
+      <span>ورود به پنل</span>
+    </a>
+    <div class="footer">
+      <div class="footer-brand">
+        🟣 <strong>Purple-Panel</strong> <span>v9.8</span>
+      </div>
+      <div class="footer-meta">
+        <span class="dot"></span>
+        <span>ساخته شده با ❤️</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
