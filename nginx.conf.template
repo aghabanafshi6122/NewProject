@@ -4,6 +4,12 @@ server {
 
     client_max_body_size 100M;
 
+    # مسیر اصلی: صفحه خوش‌آمدگویی از فایل استاتیک
+    location = / {
+        root /app/static;
+        index index.html;
+    }
+
     # مسیر اصلی: پروکسی به پنل پایتونی
     location / {
         proxy_pass http://127.0.0.1:8080;
