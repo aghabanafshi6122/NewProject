@@ -1,12 +1,7 @@
 # start.py — نسخه نهایی
-# - تلاش می‌کند پورت 8080 را آزاد کند
-# - اگر نشد، روی 8081 اجرا می‌شود
-# - مسیر /open را اضافه می‌کند
-import os
+# پنل روی 127.0.0.1:8081 گوش می‌دهد (پورت داخلی، فقط Nginx به آن دسترسی دارد)
+# Nginx روی $PORT (تزریق‌شده توسط Railway) گوش می‌دهد و به 8081 پروکسی می‌کند.
 import json
-import time
-import signal
-import subprocess
 import uvicorn
 from fastapi import Depends
 from fastapi.responses import HTMLResponse
@@ -14,7 +9,6 @@ from fastapi.responses import HTMLResponse
 from main import app, require_auth
 
 
-# ── /open : نقشه تغییر نام فایل‌ها ────────────────────────────────────────────
 @app.get("/open", response_class=HTMLResponse)
 async def open_page(_=Depends(require_auth)):
     try:
@@ -51,7 +45,7 @@ code{{background:#1a0e30;padding:4px 10px;border-radius:6px;color:#C4B5FD;font-f
 <body>
 <div class="card">
 <h1>🗺️ نقشه تغییر نام فایل‌ها</h1>
-<p>این فایل‌ها با اسم رندوم جایگزین شده‌اند تا ساختار پروژه کمی پنهان‌تر باشد.</p>
+<p>این فایل‌ها با اسم رندوم جایگزین شده‌اند.</p>
 <table>
 <tr><th>اسم اصلی</th><th></th><th>اسم جدید</th></tr>
 {rows}
@@ -62,78 +56,5 @@ code{{background:#1a0e30;padding:4px 10px;border-radius:6px;color:#C4B5FD;font-f
     return HTMLResponse(html)
 
 
-# ── ابزار آزادسازی پورت ──────────────────────────────────────────────────────
-def free_port(port: int, wait: float = 1.5) -> bool:
-    """تلاش می‌کند هر فرآیندی که روی port گوش می‌دهد را kill کند.
-    اگر موفق شود یا پورت از قبل آزاد بود True برمی‌گرداند."""
-    killed = False
-
-    # روش ۱: fuser
-    try:
-        r = subprocess.run(
-            ["fuser", f"{port}/tcp"],
-            capture_output=True, text=True, timeout=5
-        )
-        if r.stdout.strip():
-            for pid in r.stdout.strip().split():
-                try:
-                    os.kill(int(pid), signal.SIGKILL)
-                    killed = True
-                except (ProcessLookupError, ValueError, PermissionError):
-                    pass
-    except (FileNotFoundError, subprocess.TimeoutExpired, Exception):
-        pass
-
-    # روش ۲: lsof (اگر fuser نبود)
-    if not killed:
-        try:
-            r = subprocess.run(
-                ["lsof", "-t", f"-i:{port}"],
-                capture_output=True, text=True, timeout=5
-            )
-            if r.stdout.strip():
-                for pid in r.stdout.strip().split():
-                    try:
-                        os.kill(int(pid), signal.SIGKILL)
-                        killed = True
-                    except (ProcessLookupError, ValueError, PermissionError):
-                        pass
-        except (FileNotFoundError, subprocess.TimeoutExpired, Exception):
-            pass
-
-    if killed:
-        time.sleep(wait)
-        return True
-    return False
-
-
-def is_port_free(port: int) -> bool:
-    """بررسی می‌کند آیا پورت آزاد است یا نه (بدون تلاش برای kill)."""
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(0.5)
-    try:
-        s.bind(("127.0.0.1", port))
-        s.close()
-        return True
-    except OSError:
-        s.close()
-        return False
-
-
-# ── اجرا ─────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    # سعی می‌کنیم 8080 را آزاد کنیم
-    if not is_port_free(8080):
-        print("[start.py] پورت 8080 اشغال است، تلاش برای آزادسازی...")
-        free_port(8080)
-
-    if is_port_free(8080):
-        chosen_port = 8080
-    else:
-        print("[start.py] پورت 8080 هنوز اشغال است، استفاده از 8081")
-        free_port(8081)  # اگر 8081 هم اشغال بود، آزادش کن
-        chosen_port = 8081
-
-    print(f"[start.py] اجرای پنل روی 127.0.0.1:{chosen_port}")
-    uvicorn.run(app, host="127.0.0.1", port=chosen_port, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=8081, log_level="info")
